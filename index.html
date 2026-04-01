@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SecurePay — Payments Infrastructure for Everyone</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,700;0,800;1,400&family=Lora:ital,wght@1,400;1,500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07080f;
+  --s1:#0b0c16;
+  --s2:#0f1020;
+  --s3:#141627;
+  --blue:#2563eb;
+  --blue-h:#1d4ed8;
+  --indigo:#4f46e5;
+  --green:#10b981;
+  --text:#f1f2f7;
+  --t2:#9899b8;
+  --t3:#4a4b65;
+  --rim:rgba(255,255,255,0.07);
+  --rim2:rgba(255,255,255,0.13);
+  --fn:'Plus Jakarta Sans',sans-serif;
+  --fi:'Lora',serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--fn);overflow-x:hidden;line-height:1.6}
+
+/* ── DOT GRID ── */
+.dot-grid{position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,.04) 1px,transparent 1px);
+  background-size:30px 30px;
+  mask-image:radial-gradient(ellipse 90% 70% at 50% 40%,black 30%,transparent 100%)}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:64px;padding:0 6vw;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(7,8,15,0.85);backdrop-filter:blur(24px) saturate(160%);
+  border-bottom:1px solid var(--rim)}
+.logo{font-size:1.15rem;font-weight:800;letter-spacing:-.04em;
+  background:linear-gradient(90deg,#60a5fa,var(--blue));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links{display:flex;gap:2.2rem;list-style:none}
+.nav-links a{color:var(--t2);text-decoration:none;font-size:.875rem;font-weight:400;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-r{display:flex;gap:.6rem}
+.n-ghost{padding:.5rem 1.25rem;border:1px solid var(--rim);border-radius:100px;color:var(--t2);
+  text-decoration:none;font-size:.83rem;font-weight:500;transition:all .2s}
+.n-ghost:hover{border-color:var(--rim2);color:var(--text)}
+.n-fill{padding:.5rem 1.25rem;background:var(--blue);border-radius:100px;color:#fff;
+  text-decoration:none;font-size:.83rem;font-weight:700;transition:all .2s}
+.n-fill:hover{background:var(--blue-h);box-shadow:0 4px 20px rgba(37,99,235,.4)}
+
+/* ── HERO ── */
+#hero{position:relative;min-height:100vh;display:flex;flex-direction:column;
+  justify-content:center;padding:64px 6vw 0;overflow:hidden}
+.hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;
+  padding:5rem 0 11rem;position:relative;z-index:2}
+
+/* FIX 1: hero left — more generous spacing */
+.h-eyebrow{display:inline-flex;align-items:center;gap:7px;
+  background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.22);
+  padding:.32rem .9rem;border-radius:100px;margin-bottom:1.6rem}
+.h-eye-dot{width:5px;height:5px;background:var(--green);border-radius:50%;
+  animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.h-eyebrow span{font-size:.68rem;font-weight:700;letter-spacing:.1em;color:#60a5fa;text-transform:uppercase}
+
+h1{font-size:clamp(3.2rem,5.2vw,5rem);font-weight:800;line-height:.94;
+  letter-spacing:-.055em;margin-bottom:1.4rem}
+.l1{display:block;color:var(--text)}
+.l2{display:block;color:var(--blue)}
+.l3{display:block;font-family:var(--fi);font-weight:400;font-style:italic;
+  color:var(--t2);font-size:82%;letter-spacing:-.015em;margin-top:.1rem}
+
+.h-sub{font-size:1.05rem;line-height:1.78;color:var(--t2);font-weight:300;
+  max-width:460px;margin-bottom:2.2rem}
+.h-sub strong{color:var(--text);font-weight:500}
+
+.h-btns{display:flex;gap:.85rem;flex-wrap:wrap;margin-bottom:2.2rem}
+.hb-p{padding:.85rem 2rem;background:var(--blue);color:#fff;border-radius:100px;
+  font-weight:700;font-size:.95rem;text-decoration:none;
+  transition:all .25s;font-family:var(--fn);letter-spacing:-.01em}
+.hb-p:hover{background:var(--blue-h);transform:translateY(-2px);
+  box-shadow:0 10px 36px rgba(37,99,235,.45)}
+.hb-g{padding:.85rem 2rem;border:1px solid var(--rim2);color:var(--text);
+  border-radius:100px;font-weight:500;font-size:.95rem;text-decoration:none;
+  transition:all .25s;letter-spacing:-.01em}
+.hb-g:hover{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.04)}
+
+.h-trust{display:flex;align-items:center;gap:.9rem}
+.h-ava{display:flex}
+.h-ava i{width:28px;height:28px;border-radius:50%;border:2px solid var(--bg);
+  font-style:normal;font-size:.68rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;margin-left:-8px}
+.h-ava i:first-child{margin-left:0}
+.h-trust-t{font-size:.8rem;color:var(--t2)}
+.h-trust-t b{color:var(--text);font-weight:600}
+
+/* FIX 2: hero right — bigger, bolder cards */
+.dash-card:hover{transform:translateY(-5px);border-color:var(--rim2)}
+
+/* ── THREE.JS CANVAS ── */
+#bg3d{position:absolute;inset:0;z-index:0;pointer-events:none}
+
+/* ── CUSTOM CURSOR ── */
+.cursor-dot{width:7px;height:7px;background:var(--blue);border-radius:50%;position:fixed;
+  top:0;left:0;pointer-events:none;z-index:9999;mix-blend-mode:difference}
+.cursor-ring{width:30px;height:30px;border:1px solid rgba(37,99,235,0.4);border-radius:50%;
+  position:fixed;top:0;left:0;pointer-events:none;z-index:9999;mix-blend-mode:difference;
+  transition:transform 0.1s ease-out}
+
+.hero-right{display:flex;flex-direction:column;gap:1rem;transform-style:preserve-3d;perspective:800px}
+
+.dc-label{font-size:.68rem;color:var(--t2);letter-spacing:.12em;
+  text-transform:uppercase;margin-bottom:.4rem}
+.dc-amount{font-size:2.2rem;font-weight:800;letter-spacing:-.055em;margin-bottom:.35rem}
+.dc-amount .sym{color:var(--blue)}
+.dc-meta{font-size:.76rem;color:var(--t2);display:flex;align-items:center;gap:.45rem}
+.dc-up{color:var(--green);font-weight:600}
+.dc-bar-wrap{margin-top:1rem;height:3px;background:var(--s3);border-radius:100px;overflow:hidden}
+.dc-bar{height:100%;background:linear-gradient(90deg,var(--blue),var(--indigo));
+  border-radius:100px;animation:barfill 3s ease-in-out infinite alternate}
+@keyframes barfill{from{width:32%}to{width:90%}}
+
+.tx-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.tx-title{font-size:.7rem;color:var(--t2);letter-spacing:.1em;text-transform:uppercase}
+.tx-live{font-size:.65rem;color:var(--green);font-weight:700;
+  display:flex;align-items:center;gap:5px}
+.tx-live::before{content:'';width:5px;height:5px;background:var(--green);
+  border-radius:50%;animation:blink 1.6s infinite}
+.tx-row{display:flex;align-items:center;gap:.75rem;padding:.42rem 0;
+  border-bottom:1px solid rgba(255,255,255,.04)}
+.tx-row:last-child{border:none}
+.tx-ico{width:30px;height:30px;border-radius:9px;display:flex;
+  align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+.tx-ico.bl{background:rgba(37,99,235,.12)}
+.tx-ico.gr{background:rgba(16,185,129,.12)}
+.tx-ico.in{background:rgba(79,70,229,.12)}
+.tx-info{flex:1}
+.tx-n{font-size:.8rem;font-weight:600}
+.tx-s{font-size:.65rem;color:var(--t3);margin-top:.05rem}
+.tx-v{font-size:.88rem;font-weight:800;color:var(--green);font-family:var(--fn);
+  letter-spacing:-.02em}
+
+.stat-pair{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.stat-mini{background:var(--s2);border:1px solid var(--rim);border-radius:18px;
+  padding:1.1rem 1.3rem;transition:border-color .3s}
+.stat-mini:hover{border-color:var(--rim2)}
+.sm-l{font-size:.65rem;color:var(--t2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem}
+.sm-v{font-size:1.55rem;font-weight:800;letter-spacing:-.045em}
+.sm-v.blue{color:var(--blue)}
+.sm-v.grn{color:var(--green)}
+.sm-sub{font-size:.68rem;color:var(--t3);margin-top:.2rem}
+
+/* FIX 3: stats bar — more visual weight */
+.stats-bar{position:absolute;bottom:2.5rem;left:6vw;right:6vw;z-index:2;
+  display:grid;grid-template-columns:repeat(4,1fr);
+  background:rgba(11,12,22,.82);backdrop-filter:blur(20px);
+  border:1px solid var(--rim);border-radius:20px;overflow:hidden;
+  box-shadow:0 8px 40px rgba(0,0,0,.4)}
+.sb-cell{padding:1.3rem 1.8rem;border-right:1px solid var(--rim)}
+.sb-cell:last-child{border-right:none}
+.sb-n{font-size:1.4rem;font-weight:800;letter-spacing:-.045em}
+.sb-l{font-size:.72rem;color:var(--t2);margin-top:.18rem}
+
+/* ── MARQUEE ── */
+.mq{padding:1rem 0;background:var(--s1);border-top:1px solid var(--rim);
+  border-bottom:1px solid var(--rim);overflow:hidden;position:relative}
+.mq::before,.mq::after{content:'';position:absolute;top:0;bottom:0;
+  width:100px;z-index:2;pointer-events:none}
+.mq::before{left:0;background:linear-gradient(90deg,var(--s1),transparent)}
+.mq::after{right:0;background:linear-gradient(-90deg,var(--s1),transparent)}
+.mq-track{display:flex;gap:2.5rem;animation:mq 28s linear infinite;white-space:nowrap}
+.mq-item{font-size:.82rem;font-weight:600;color:var(--t3);
+  display:flex;align-items:center;gap:.75rem;letter-spacing:.01em}
+.mq-sep{width:3px;height:3px;background:var(--blue);border-radius:50%;opacity:.5}
+@keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── SECTIONS ── */
+section{padding:6.5rem 6vw}
+.s-tag{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--blue);display:flex;align-items:center;gap:7px;margin-bottom:.75rem}
+.s-tag::before{content:'';width:18px;height:1.5px;background:var(--blue)}
+.s-h2{font-size:clamp(2.2rem,3.5vw,3rem);font-weight:800;letter-spacing:-.055em;
+  line-height:1.06;margin-bottom:.9rem}
+.s-sub{font-size:1rem;color:var(--t2);line-height:1.74;font-weight:300;
+  max-width:520px;margin-bottom:3rem}
+.reveal{opacity:0;transform:translateY(22px)}
+
+/* ── PRODUCTS ── */
+#products{background:var(--s1)}
+.prod-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-bottom:1.1rem}
+.prod-wide{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;margin-bottom:1.1rem}
+
+/* FIX 4: product cards — more padding, stronger hover */
+.pc{background:var(--bg);border:1px solid var(--rim);border-radius:20px;
+  padding:1.7rem;transition:all .3s;cursor:default;position:relative;overflow:hidden}
+.pc::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--blue);transform:scaleY(0);transform-origin:bottom;
+  transition:transform .38s ease}
+.pc:hover::before{transform:scaleY(1)}
+.pc:hover{border-color:var(--rim2);transform:translateY(-4px);
+  box-shadow:0 16px 50px rgba(0,0,0,.45)}
+.pc-ico{width:44px;height:44px;background:rgba(37,99,235,.1);border-radius:13px;
+  display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:1.1rem}
+.pc-h{font-size:1.02rem;font-weight:700;letter-spacing:-.03em;margin-bottom:.5rem}
+.pc-p{font-size:.83rem;color:var(--t2);line-height:1.6;font-weight:300}
+.pc-link{font-size:.78rem;color:var(--blue);font-weight:600;margin-top:.9rem;
+  display:inline-block;text-decoration:none}
+.pc-link:hover{text-decoration:underline}
+
+.pw{background:var(--bg);border:1px solid var(--rim);border-radius:20px;
+  padding:1.7rem;transition:all .3s;cursor:default}
+.pw:hover{border-color:var(--rim2);transform:translateY(-4px);
+  box-shadow:0 16px 50px rgba(0,0,0,.45)}
+.pw-inner{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;
+  align-items:flex-end;margin-top:1.2rem}
+.pw-bars{display:flex;align-items:flex-end;gap:5px;height:56px}
+.pwb{border-radius:4px 4px 0 0;flex:1}
+.pwb.b{background:linear-gradient(180deg,var(--blue),rgba(37,99,235,.15))}
+.pwb.g{background:linear-gradient(180deg,var(--green),rgba(16,185,129,.15))}
+.pw-chart-label{font-size:1.35rem;font-weight:800;letter-spacing:-.045em;
+  color:var(--green);margin-top:.55rem}
+.pw-chart-sub{font-size:.72rem;color:var(--t2);margin-top:.1rem}
+.pw-stats{display:flex;flex-direction:column;gap:.6rem}
+.pw-stat{background:var(--s2);border-radius:12px;padding:.7rem 1rem}
+.pw-stat-n{font-size:1.35rem;font-weight:800;letter-spacing:-.04em}
+.pw-stat-l{font-size:.65rem;color:var(--t2);margin-top:.1rem}
+
+.sound-full{background:var(--bg);border:1px solid rgba(37,99,235,.18);
+  border-radius:20px;padding:1.8rem 2.2rem;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:2rem;transition:border-color .3s;position:relative;overflow:hidden}
+.sound-full::before{content:'';position:absolute;left:0;top:0;bottom:0;
+  width:4px;background:var(--blue)}
+.sound-full:hover{border-color:rgba(37,99,235,.35)}
+.sf-l h3{font-size:1.25rem;font-weight:800;letter-spacing:-.04em;margin-bottom:.4rem}
+.sf-l p{font-size:.87rem;color:var(--t2);font-weight:300;max-width:380px}
+.sf-r{display:flex;align-items:center;gap:2.8rem;flex-shrink:0}
+.sf-s{text-align:center}
+.sf-s-n{font-size:1.35rem;font-weight:800;letter-spacing:-.04em;color:var(--blue)}
+.sf-s-l{font-size:.68rem;color:var(--t2);margin-top:.2rem}
+
+/* ── SECURITY ── */
+#security{background:var(--bg);display:grid;
+  grid-template-columns:1.15fr 1fr;gap:6vw;align-items:center;
+  padding:6.5rem 6vw}
+.comp-list{display:flex;flex-direction:column;gap:.75rem}
+.comp-card{display:flex;align-items:center;gap:1rem;padding:1.2rem 1.4rem;
+  background:var(--s1);border:1px solid var(--rim);border-radius:18px;transition:all .3s}
+.comp-card:hover{border-color:rgba(37,99,235,.3);transform:translateX(6px);background:var(--s2)}
+.cc-ico{width:42px;height:42px;background:rgba(37,99,235,.1);border-radius:13px;
+  display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.cc-body h4{font-size:.92rem;font-weight:700;letter-spacing:-.025em}
+.cc-body p{font-size:.77rem;color:var(--t2);font-weight:300;margin-top:.18rem;line-height:1.5}
+.cc-chk{margin-left:auto;width:24px;height:24px;background:rgba(16,185,129,.12);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:var(--green);font-size:.78rem;flex-shrink:0;font-weight:700}
+
+/* FIX 5: security visual — bigger, better positioned badges */
+.sec-vis{position:relative;height:440px;display:flex;align-items:center;justify-content:center}
+.sec-ring{position:absolute;border-radius:50%;border:1px solid}
+.r1{width:210px;height:210px;border-color:rgba(37,99,235,.22);animation:sp 22s linear infinite}
+.r2{width:320px;height:320px;border-color:rgba(79,70,229,.13);animation:sp 34s linear infinite reverse}
+.r3{width:415px;height:415px;border-color:rgba(37,99,235,.07);animation:sp 46s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.rd{width:9px;height:9px;border-radius:50%;position:absolute;top:-4.5px;left:50%;transform:translateX(-50%)}
+.rd-b{background:var(--blue);box-shadow:0 0 10px rgba(37,99,235,.9)}
+.rd-g{background:var(--green);box-shadow:0 0 10px rgba(16,185,129,.9)}
+.rd-i{background:var(--indigo);box-shadow:0 0 10px rgba(79,70,229,.9)}
+.sec-core{width:108px;height:108px;
+  background:linear-gradient(135deg,var(--blue),var(--indigo));
+  border-radius:28px;display:flex;align-items:center;justify-content:center;
+  font-size:2.6rem;position:relative;z-index:2;
+  box-shadow:0 0 70px rgba(37,99,235,.28),0 0 140px rgba(79,70,229,.1);
+  animation:pulse 4s ease-in-out infinite}
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 70px rgba(37,99,235,.28),0 0 140px rgba(79,70,229,.1)}
+  50%{box-shadow:0 0 100px rgba(37,99,235,.45),0 0 180px rgba(79,70,229,.18)}}
+.fb{position:absolute;background:rgba(10,11,20,.95);border:1px solid var(--rim);
+  backdrop-filter:blur(12px);border-radius:12px;padding:.5rem 1rem;
+  font-size:.75rem;font-weight:600;display:flex;align-items:center;gap:.5rem;
+  white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.fb-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.fb-b{background:var(--blue)}
+.fb-g{background:var(--green)}
+.fb-i{background:var(--indigo)}
+
+/* ── DEV ── */
+#dev{background:var(--s1);display:grid;grid-template-columns:1fr 1fr;
+  gap:6vw;align-items:center;padding:6.5rem 6vw}
+.dev-feats{display:flex;flex-direction:column;gap:.7rem;margin-top:2rem}
+.df{display:flex;align-items:center;gap:.95rem;padding:.9rem 1.2rem;
+  background:var(--bg);border:1px solid var(--rim);border-radius:15px;transition:all .25s}
+.df:hover{border-color:rgba(37,99,235,.28);transform:translateX(5px)}
+.df-ico{width:34px;height:34px;background:rgba(37,99,235,.1);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.df-t strong{font-size:.9rem;font-weight:700;display:block;letter-spacing:-.02em}
+.df-t span{font-size:.75rem;color:var(--t2);font-weight:300}
+
+.code-win{background:#060710;border:1px solid var(--rim);border-radius:20px;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.code-bar{padding:.72rem 1.1rem;background:rgba(255,255,255,.03);
+  border-bottom:1px solid var(--rim);display:flex;align-items:center;gap:.45rem}
+.cb-d{width:11px;height:11px;border-radius:50%}
+.cb-d1{background:#ff5f57}.cb-d2{background:#febc2e}.cb-d3{background:#28c840}
+.cb-f{font-size:.72rem;color:var(--t3);margin-left:auto;font-family:monospace}
+.code-body{padding:1.5rem 1.6rem;font-family:'Courier New',monospace;
+  font-size:.77rem;line-height:1.92;overflow-x:auto}
+.ck{color:#60a5fa}.cs{color:#34d399}.cn{color:#fbbf24}
+.cf{color:#a78bfa}.cv{color:#e2e8f0}.cc{color:#4b5563}
+
+/* ── FAQ ── */
+#faq{background:var(--bg)}
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin-top:3rem}
+.fq{background:var(--s1);border:1px solid var(--rim);border-radius:18px;
+  padding:1.5rem;transition:all .25s;cursor:default}
+.fq:hover{border-color:rgba(37,99,235,.25);transform:translateY(-2px);
+  box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.fq-q{font-size:.95rem;font-weight:700;letter-spacing:-.025em;margin-bottom:.5rem;
+  display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem}
+.fq-q::after{content:'+';color:var(--blue);font-weight:400;font-size:1.2rem;flex-shrink:0}
+.fq-a{font-size:.81rem;color:var(--t2);line-height:1.68;font-weight:300}
+
+/* ── CTA ── */
+#cta{background:var(--s1);text-align:center;padding:9rem 6vw;position:relative;overflow:hidden}
+.cta-glow{position:absolute;width:700px;height:500px;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(ellipse,rgba(37,99,235,.09),rgba(79,70,229,.04) 45%,transparent 70%);
+  pointer-events:none}
+#cta .s-tag{justify-content:center}
+#cta .s-h2{font-size:clamp(2.6rem,4.5vw,4rem);text-align:center;margin-bottom:.85rem}
+#cta .s-sub{margin:0 auto 2.5rem;text-align:center;max-width:420px}
+.cta-btns{display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap}
+.cta-trust{display:flex;align-items:center;justify-content:center;gap:1.5rem;
+  margin-top:1.4rem;flex-wrap:wrap}
+.cta-trust span{font-size:.78rem;color:var(--t3);display:flex;align-items:center;gap:.4rem}
+.cta-trust span::before{content:'✓';color:var(--green);font-weight:700}
+
+/* ── FOOTER ── */
+footer{background:var(--bg);border-top:1px solid var(--rim);
+  padding:2rem 6vw;display:flex;align-items:center;justify-content:space-between}
+.fl{font-size:1.05rem;font-weight:800;letter-spacing:-.04em;
+  background:linear-gradient(90deg,#60a5fa,var(--blue));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.fn-links{display:flex;gap:2rem;list-style:none}
+.fn-links a{color:var(--t3);text-decoration:none;font-size:.8rem;transition:color .2s}
+.fn-links a:hover{color:var(--t2)}
+.fc{font-size:.75rem;color:var(--t3)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1024px){
+  nav{padding:0 1.5rem} .nav-links{display:none}
+  #hero{padding:64px 1.5rem 0}
+  .hero-inner{grid-template-columns:1fr;gap:2.5rem;padding:2.5rem 0 9rem}
+  .hero-right{display:none}
+  .stats-bar{left:1.5rem;right:1.5rem;grid-template-columns:1fr 1fr}
+  section,#security,#dev{padding:5rem 1.5rem}
+  .prod-grid{grid-template-columns:1fr}
+  .prod-wide{grid-template-columns:1fr}
+  #security{grid-template-columns:1fr;gap:3rem}
+  #dev{grid-template-columns:1fr;gap:2.5rem}
+  .sec-vis{height:280px}
+  .faq-grid{grid-template-columns:1fr}
+  .sound-full{flex-direction:column;align-items:flex-start}
+  footer{flex-direction:column;gap:1rem;text-align:center;padding:1.5rem}
+  .fn-links{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">SecurePay</div>
+  <ul class="nav-links">
+    <li><a href="#products">Products</a></li>
+    <li><a href="#security">Security</a></li>
+    <li><a href="#dev">Developers</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <div class="nav-r">
+    <a href="#" class="n-ghost">Sign In</a>
+    <a href="#" class="n-fill">Get Started</a>
+  </div>
+</nav>
+
+<section id="hero">
+  <canvas id="bg3d"></canvas>
+  <div class="dot-grid"></div>
+  <div class="hero-inner">
+
+    <!-- LEFT -->
+    <div>
+      <div class="h-eyebrow">
+        <span class="h-eye-dot"></span>
+        <span>Trusted by 2,500+ Indian Merchants</span>
+      </div>
+      <h1>
+        <span class="l1">Payments</span>
+        <span class="l2">Infrastructure</span>
+        <span class="l3">for Everyone</span>
+      </h1>
+      <p class="h-sub">From <strong>seamless UPI & QR</strong> to <strong>Soundbox & POS</strong> — SecurePay powers every transaction with intelligent routing, bank-grade security, and instant settlements.</p>
+      <div class="h-btns">
+        <a href="#" class="hb-p">Start Accepting Payments</a>
+        <a href="#" class="hb-g">View API Docs →</a>
+      </div>
+      <div class="h-trust">
+        <div class="h-ava">
+          <i style="background:#1a2840;color:#60a5fa">M</i>
+          <i style="background:#132a1f;color:#34d399">R</i>
+          <i style="background:#221b3a;color:#a78bfa">K</i>
+          <i style="background:#2a1e0a;color:#fbbf24">S</i>
+        </div>
+        <div class="h-trust-t">Trusted by <b>2,500+</b> merchants across India</div>
+      </div>
+    </div>
+
+    <!-- RIGHT — Live Dashboard -->
+    <div class="hero-right">
+      <div class="dash-card">
+        <div class="dc-label">Today's Collections</div>
+        <div class="dc-amount"><span class="sym">₹</span><span id="c1">2,84,950</span></div>
+        <div class="dc-meta">
+          <span class="dc-up">↑ 12.4%</span>
+          from yesterday &nbsp;·&nbsp; 847 transactions
+        </div>
+        <div class="dc-bar-wrap"><div class="dc-bar"></div></div>
+      </div>
+
+      <div class="dash-card">
+        <div class="tx-head">
+          <span class="tx-title">Recent Transactions</span>
+          <span class="tx-live">Live</span>
+        </div>
+        <div class="tx-row">
+          <div class="tx-ico gr">⚡</div>
+          <div class="tx-info">
+            <div class="tx-n">Ravi's Kirana Store</div>
+            <div class="tx-s">UPI · 2s ago</div>
+          </div>
+          <div class="tx-v">₹1,240</div>
+        </div>
+        <div class="tx-row">
+          <div class="tx-ico bl">◈</div>
+          <div class="tx-info">
+            <div class="tx-n">TechMart Electronics</div>
+            <div class="tx-s">QR Code · 9s ago</div>
+          </div>
+          <div class="tx-v">₹8,500</div>
+        </div>
+        <div class="tx-row">
+          <div class="tx-ico in">◉</div>
+          <div class="tx-info">
+            <div class="tx-n">Priya Fashion Hub</div>
+            <div class="tx-s">Card · 18s ago</div>
+          </div>
+          <div class="tx-v">₹3,299</div>
+        </div>
+      </div>
+
+      <div class="stat-pair">
+        <div class="stat-mini">
+          <div class="sm-l">Settlement</div>
+          <div class="sm-v blue">T+0</div>
+          <div class="sm-sub">Same day credit</div>
+        </div>
+        <div class="stat-mini">
+          <div class="sm-l">Success Rate</div>
+          <div class="sm-v grn">99.9%</div>
+          <div class="sm-sub">Smart routing</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="stats-bar">
+    <div class="sb-cell">
+      <div class="sb-n"><span id="s1">2,500</span>+</div>
+      <div class="sb-l">Active Merchants</div>
+    </div>
+    <div class="sb-cell">
+      <div class="sb-n">₹<span id="s2">1,200</span> Cr+</div>
+      <div class="sb-l">Transactions Processed</div>
+    </div>
+    <div class="sb-cell">
+      <div class="sb-n"><span id="s3">99.9</span>%</div>
+      <div class="sb-l">Payment Success Rate</div>
+    </div>
+    <div class="sb-cell">
+      <div class="sb-n">24×7</div>
+      <div class="sb-l">Dedicated Support</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="mq">
+  <div class="mq-track">
+    <span class="mq-item"><span class="mq-sep"></span>Payment Gateway</span>
+    <span class="mq-item"><span class="mq-sep"></span>QR Collections</span>
+    <span class="mq-item"><span class="mq-sep"></span>POS Terminal</span>
+    <span class="mq-item"><span class="mq-sep"></span>Auto Collect</span>
+    <span class="mq-item"><span class="mq-sep"></span>Payout System</span>
+    <span class="mq-item"><span class="mq-sep"></span>BBPS Platform</span>
+    <span class="mq-item"><span class="mq-sep"></span>Soundbox</span>
+    <span class="mq-item"><span class="mq-sep"></span>UPI Switch</span>
+    <span class="mq-item"><span class="mq-sep"></span>Smart Routing</span>
+    <span class="mq-item"><span class="mq-sep"></span>Developer APIs</span>
+    <span class="mq-item"><span class="mq-sep"></span>Merchant Dashboard</span>
+    <span class="mq-item"><span class="mq-sep"></span>Payment Gateway</span>
+    <span class="mq-item"><span class="mq-sep"></span>QR Collections</span>
+    <span class="mq-item"><span class="mq-sep"></span>POS Terminal</span>
+    <span class="mq-item"><span class="mq-sep"></span>Auto Collect</span>
+    <span class="mq-item"><span class="mq-sep"></span>Payout System</span>
+    <span class="mq-item"><span class="mq-sep"></span>BBPS Platform</span>
+    <span class="mq-item"><span class="mq-sep"></span>Soundbox</span>
+    <span class="mq-item"><span class="mq-sep"></span>UPI Switch</span>
+    <span class="mq-item"><span class="mq-sep"></span>Smart Routing</span>
+    <span class="mq-item"><span class="mq-sep"></span>Developer APIs</span>
+    <span class="mq-item"><span class="mq-sep"></span>Merchant Dashboard</span>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<section id="products">
+  <div class="s-tag reveal">One Platform</div>
+  <h2 class="s-h2 reveal">Every Payment Solution</h2>
+  <p class="s-sub reveal">Modular infrastructure built to simplify collections, strengthen security, and help businesses scale — online and offline.</p>
+
+  <div class="prod-grid">
+    <div class="pc reveal">
+      <div class="pc-ico">⚡</div>
+      <div class="pc-h">Payment Gateway</div>
+      <p class="pc-p">Accept cards, UPI, net banking, and wallets online. High success rates, instant settlements, developer-friendly APIs.</p>
+      <a href="#" class="pc-link">Explore →</a>
+    </div>
+    <div class="pc reveal">
+      <div class="pc-ico" style="background:rgba(16,185,129,.1)">◈</div>
+      <div class="pc-h">QR Code Payments</div>
+      <p class="pc-p">Static and dynamic QR codes across all UPI apps. Instant confirmation, easy reconciliation for any merchant size.</p>
+      <a href="#" class="pc-link">Explore →</a>
+    </div>
+    <div class="pc reveal">
+      <div class="pc-ico" style="background:rgba(79,70,229,.1)">◉</div>
+      <div class="pc-h">POS Solutions</div>
+      <p class="pc-p">Card, UPI, wallet and contactless at physical locations. Keep your checkout lines moving with zero friction.</p>
+      <a href="#" class="pc-link">Explore →</a>
+    </div>
+  </div>
+
+  <div class="prod-wide">
+    <div class="pw reveal">
+      <div class="pc-ico">⟳</div>
+      <div class="pc-h">Auto Collect</div>
+      <p class="pc-p">Virtual accounts and smart identifiers automate your collections. Zero manual follow-ups, perfect reconciliation.</p>
+      <div class="pw-inner">
+        <div>
+          <div style="font-size:.65rem;color:var(--t2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5rem">Weekly Collections</div>
+          <div class="pw-bars">
+            <div class="pwb b" style="height:38%"></div>
+            <div class="pwb b" style="height:60%"></div>
+            <div class="pwb g" style="height:48%"></div>
+            <div class="pwb g" style="height:76%"></div>
+            <div class="pwb b" style="height:64%"></div>
+            <div class="pwb g" style="height:90%"></div>
+            <div class="pwb g" style="height:100%"></div>
+          </div>
+          <div class="pw-chart-label">₹48.2L</div>
+          <div class="pw-chart-sub">↑ 18% this week</div>
+        </div>
+        <div class="pw-stats">
+          <div class="pw-stat">
+            <div class="pw-stat-n" style="color:var(--blue)">2,500+</div>
+            <div class="pw-stat-l">Merchants using Auto Collect</div>
+          </div>
+          <div class="pw-stat">
+            <div class="pw-stat-n" style="color:var(--green)">0</div>
+            <div class="pw-stat-l">Manual follow-ups needed</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pw reveal">
+      <div class="pc-ico" style="background:rgba(16,185,129,.1)">↑</div>
+      <div class="pc-h">Payout System</div>
+      <p class="pc-p">Disburse to vendors, partners, and customers in real time. Fast, secure, fully compliant fund transfers at scale.</p>
+      <div class="pw-stats" style="margin-top:1.2rem">
+        <div class="pw-stat">
+          <div class="pw-stat-n" style="color:var(--blue)">T+0</div>
+          <div class="pw-stat-l">Same day settlement to bank</div>
+        </div>
+        <div class="pw-stat">
+          <div class="pw-stat-n" style="color:var(--green)">99.9%</div>
+          <div class="pw-stat-l">Platform uptime guaranteed</div>
+        </div>
+        <div class="pw-stat">
+          <div class="pw-stat-n" style="color:var(--t2)">₹1,200Cr+</div>
+          <div class="pw-stat-l">Total payouts disbursed</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="sound-full reveal">
+      <div class="sf-l">
+        <h3>🔊 Soundbox — Hear Every Payment</h3>
+        <p>Real-time audio confirmations for UPI. Instant trust and zero payment confusion for retail and high-footfall businesses.</p>
+      </div>
+      <div class="sf-r">
+        <div class="sf-s">
+          <div class="sf-s-n">2,500+</div>
+          <div class="sf-s-l">Active Devices</div>
+        </div>
+        <div class="sf-s">
+          <div class="sf-s-n">₹1,200Cr+</div>
+          <div class="sf-s-l">Processed</div>
+        </div>
+        <div class="sf-s">
+          <div class="sf-s-n">&lt;0.3s</div>
+          <div class="sf-s-l">Confirmation</div>
+        </div>
+        <a href="#" class="hb-p" style="font-size:.88rem;padding:.72rem 1.5rem;text-decoration:none;white-space:nowrap">Learn More →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECURITY -->
+<section id="security">
+  <div>
+    <div class="s-tag reveal">Security & Compliance</div>
+    <h2 class="s-h2 reveal">Bank-Grade Compliance</h2>
+    <p class="s-sub reveal" style="margin-bottom:2rem">Every transaction encrypted, every data point protected. PCI-DSS certified, RBI & NPCI aligned — built for the trust Indian merchants demand.</p>
+    <div class="comp-list">
+      <div class="comp-card reveal">
+        <div class="cc-ico">🔒</div>
+        <div class="cc-body">
+          <h4>PCI-DSS Certified</h4>
+          <p>Industry-standard encryption protecting all transaction data end-to-end</p>
+        </div>
+        <div class="cc-chk">✓</div>
+      </div>
+      <div class="comp-card reveal">
+        <div class="cc-ico">🏛</div>
+        <div class="cc-body">
+          <h4>RBI & NPCI Aligned</h4>
+          <p>Fully compliant with all applicable Indian regulatory frameworks</p>
+        </div>
+        <div class="cc-chk">✓</div>
+      </div>
+      <div class="comp-card reveal">
+        <div class="cc-ico">🛡</div>
+        <div class="cc-body">
+          <h4>256-bit Encryption</h4>
+          <p>End-to-end encrypted data flow on every single transaction processed</p>
+        </div>
+        <div class="cc-chk">✓</div>
+      </div>
+      <div class="comp-card reveal">
+        <div class="cc-ico">👁</div>
+        <div class="cc-body">
+          <h4>Real-time Fraud Monitoring</h4>
+          <p>Every transaction monitored — anomalies flagged and blocked instantly</p>
+        </div>
+        <div class="cc-chk">✓</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-vis reveal">
+    <div class="sec-ring r1"><div class="rd rd-b"></div></div>
+    <div class="sec-ring r2"><div class="rd rd-g"></div></div>
+    <div class="sec-ring r3"><div class="rd rd-i"></div></div>
+    <div class="sec-core">🛡</div>
+    <div class="fb" style="top:9%;left:52%">
+      <span class="fb-dot fb-g"></span>PCI-DSS Certified
+    </div>
+    <div class="fb" style="bottom:16%;right:-5%">
+      <span class="fb-dot fb-b"></span>256-bit SSL
+    </div>
+    <div class="fb" style="top:46%;left:-8%">
+      <span class="fb-dot fb-i"></span>RBI Approved
+    </div>
+  </div>
+</section>
+
+<!-- DEVELOPER -->
+<section id="dev">
+  <div>
+    <div class="s-tag reveal">Developers</div>
+    <h2 class="s-h2 reveal">Integrated in Minutes</h2>
+    <p class="s-sub reveal" style="margin-bottom:0">Clean REST APIs, full SDKs, sandbox environment, and documentation that gets out of your way.</p>
+    <div class="dev-feats">
+      <div class="df reveal">
+        <div class="df-ico">📋</div>
+        <div class="df-t"><strong>API Reference</strong><span>Endpoints, auth flows, request/response formats</span></div>
+      </div>
+      <div class="df reveal">
+        <div class="df-ico">🧪</div>
+        <div class="df-t"><strong>Dev Studio</strong><span>Simulate transactions, test edge cases before going live</span></div>
+      </div>
+      <div class="df reveal">
+        <div class="df-ico">🔌</div>
+        <div class="df-t"><strong>Plug-and-play Integrations</strong><span>Ready connectors for your existing tech stack</span></div>
+      </div>
+      <div class="df reveal">
+        <div class="df-ico">⚡</div>
+        <div class="df-t"><strong>Go live in days, not weeks</strong><span>Simple onboarding, guided setup, zero friction</span></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:.85rem;margin-top:1.8rem;flex-wrap:wrap">
+      <a href="#" class="hb-p">Explore API Docs</a>
+      <a href="#" class="hb-g">Open Dev Studio →</a>
+    </div>
+  </div>
+
+  <div class="code-win reveal">
+    <div class="code-bar">
+      <div class="cb-d cb-d1"></div>
+      <div class="cb-d cb-d2"></div>
+      <div class="cb-d cb-d3"></div>
+      <span class="cb-f">payment-init.js</span>
+    </div>
+    <div class="code-body"><pre><span class="cc">// Initialize SecurePay SDK</span>
+<span class="ck">import</span> <span class="cv">SecurePay</span> <span class="ck">from</span> <span class="cs">'@securepay/sdk'</span>;
+
+<span class="ck">const</span> <span class="cv">client</span> = <span class="ck">new</span> <span class="cf">SecurePay</span>({
+  <span class="cv">apiKey</span>: process.<span class="cv">env</span>.<span class="cv">SP_SECRET_KEY</span>,
+  <span class="cv">env</span>: <span class="cs">'production'</span>
+});
+
+<span class="cc">// Create a payment order</span>
+<span class="ck">const</span> <span class="cv">order</span> = <span class="ck">await</span> <span class="cv">client</span>.<span class="cf">orders</span>.<span class="cf">create</span>({
+  <span class="cv">amount</span>:   <span class="cn">49900</span>,   <span class="cc">// in paise</span>
+  <span class="cv">currency</span>: <span class="cs">'INR'</span>,
+  <span class="cv">method</span>:   <span class="cs">'upi'</span>,
+  <span class="cv">capture</span>:  <span class="ck">true</span>
+});
+
+<span class="cc">// Handle settlement webhook</span>
+<span class="cv">app</span>.<span class="cf">post</span>(<span class="cs">'/webhook'</span>, (<span class="cv">req</span>, <span class="cv">res</span>) => {
+  <span class="ck">const</span> { <span class="cv">event</span>, <span class="cv">data</span> } = <span class="cv">req</span>.<span class="cv">body</span>;
+  <span class="ck">if</span> (<span class="cv">event</span> === <span class="cs">'payment.settled'</span>) {
+    <span class="cc">// ✅ T+0 — funds credited</span>
+    <span class="cf">creditMerchant</span>(<span class="cv">data</span>);
+  }
+  <span class="cv">res</span>.<span class="cf">sendStatus</span>(<span class="cn">200</span>);
+});</pre></div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="s-tag reveal">FAQ</div>
+  <h2 class="s-h2 reveal">Common Questions</h2>
+  <div class="faq-grid">
+    <div class="fq reveal">
+      <div class="fq-q">How fast is onboarding?</div>
+      <div class="fq-a">Typically 24–48 hours after KYC document verification — PAN, Aadhaar, and bank details. Submit once, go live immediately after approval.</div>
+    </div>
+    <div class="fq reveal">
+      <div class="fq-q">What payment methods are supported?</div>
+      <div class="fq-a">UPI, credit & debit cards, wallets, net banking, QR payments, POS terminals, and Soundbox — all from one merchant dashboard.</div>
+    </div>
+    <div class="fq reveal">
+      <div class="fq-q">Are there any hidden fees?</div>
+      <div class="fq-a">None. Transparent per-transaction pricing only. No setup fee, no monthly fee. Full pricing available on request during onboarding.</div>
+    </div>
+    <div class="fq reveal">
+      <div class="fq-q">When are settlements credited?</div>
+      <div class="fq-a">Settlements processed daily, credited within 24 hours. T+0 same-day settlement available depending on your business configuration.</div>
+    </div>
+    <div class="fq reveal">
+      <div class="fq-q">Is there a developer sandbox?</div>
+      <div class="fq-a">Yes — Dev Studio lets you simulate transactions, test edge cases, and validate your full integration before going live. No real money involved.</div>
+    </div>
+    <div class="fq reveal">
+      <div class="fq-q">Is SecurePay RBI compliant?</div>
+      <div class="fq-a">Fully. SecurePay operates under all applicable RBI and NPCI guidelines, holds PCI-DSS certification with 256-bit encryption across all data flows.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="cta-glow"></div>
+  <div class="s-tag reveal">Get Started Today</div>
+  <h2 class="s-h2 reveal">Start accepting<br>payments today.</h2>
+  <p class="s-sub reveal">Join 2,500+ merchants across India who trust SecurePay to power their growth — from first sale to crores.</p>
+  <div class="cta-btns reveal">
+    <a href="#" class="hb-p" style="font-size:1rem;padding:.95rem 2.4rem">Create Free Account</a>
+    <a href="#" class="hb-g" style="font-size:1rem;padding:.95rem 2.4rem">Talk to Sales →</a>
+  </div>
+  <div class="cta-trust reveal">
+    <span>No setup fee</span>
+    <span>Go live in 24 hours</span>
+    <span>PCI-DSS Certified</span>
+  </div>
+</section>
+
+<footer>
+  <div class="fl">SecurePay</div>
+  <ul class="fn-links">
+    <li><a href="#">Products</a></li>
+    <li><a href="#">Security</a></li>
+    <li><a href="#">Developers</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+  <div class="fc">© 2026 SecurePay · PCI-DSS Certified · RBI Aligned</div>
+</footer>
+
+<!-- CUSTOM CURSOR -->
+<div class="cursor-dot"></div>
+<div class="cursor-ring"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+/* GSAP scroll reveals */
+if(window.gsap && window.ScrollTrigger){
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.utils.toArray('.reveal').forEach((el,i)=>{
+    gsap.from(el,{
+      scrollTrigger:{trigger:el,start:'top 88%',toggleActions:'play none none none'},
+      opacity:0,y:22,duration:.7,delay:(i%5)*.07,ease:'power2.out'
+    });
+  });
+}
+
+/* Live transaction feed */
+const txData=[
+  ['Ravi\'s Kirana Store','⚡','gr','UPI'],
+  ['TechMart Electronics','◈','bl','QR Code'],
+  ['Priya Fashion Hub','◉','in','Card'],
+  ['Anand Medical Store','⚡','gr','UPI'],
+  ['Coffee Republic','◈','bl','QR Code'],
+  ['QuickMart Retail','◉','in','POS'],
+  ['Sharma Jewellers','⚡','gr','UPI'],
+  ['BookWorld Store','◈','bl','QR Code']
+];
+const amts=[1240,8500,3299,520,1890,4200,12400,680,2100,5600];
+let ti=0;
+setInterval(()=>{
+  const rows=document.querySelectorAll('.tx-row');
+  if(!rows.length) return;
+  const d=txData[ti%txData.length];
+  const a=amts[ti%amts.length];
+  const r=rows[0];
+  r.querySelector('.tx-ico').className='tx-ico '+d[2];
+  r.querySelector('.tx-ico').textContent=d[1];
+  r.querySelector('.tx-n').textContent=d[0];
+  r.querySelector('.tx-s').textContent=d[3]+' · just now';
+  r.querySelector('.tx-v').textContent='₹'+a.toLocaleString('en-IN');
+  ti++;
+},2800);
+
+/* THREE JS BACKGROUND */
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#bg3d'), alpha: true, antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+camera.position.z = 5;
+
+const particlesGeometry = new THREE.BufferGeometry();
+const particlesCount = 1500;
+const posArray = new Float32Array(particlesCount * 3);
+for(let i=0; i < particlesCount * 3; i++) {
+    posArray[i] = (Math.random() - 0.5) * 20;
+    if(i % 3 === 2) posArray[i] = (Math.random() - 0.5) * 10;
+}
+particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+const particlesMaterial = new THREE.PointsMaterial({ size: 0.02, color: 0xffffff, transparent: true, opacity: 0.35 });
+const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+scene.add(particlesMesh);
+
+const torus1 = new THREE.Mesh(new THREE.TorusGeometry(3, 0.025, 8, 100), new THREE.MeshBasicMaterial({ color: 0x2563eb, transparent: true, opacity: 0.15 }));
+const torus2 = new THREE.Mesh(new THREE.TorusGeometry(4.5, 0.015, 8, 100), new THREE.MeshBasicMaterial({ color: 0x4f46e5, transparent: true, opacity: 0.08 }));
+scene.add(torus1, torus2);
+
+let mouseX = 0, mouseY = 0;
+window.addEventListener('mousemove', (e) => {
+    mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+    mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+});
+
+function animate() {
+    requestAnimationFrame(animate);
+    torus1.rotation.z += 0.002; torus1.rotation.y += 0.001;
+    torus2.rotation.z -= 0.001; torus2.rotation.y -= 0.002;
+    camera.position.x += (mouseX * 0.5 - camera.position.x) * 0.02;
+    camera.position.y += (-mouseY * 0.5 - camera.position.y) * 0.02;
+    camera.lookAt(scene.position);
+    renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+/* CUSTOM CURSOR */
+const curDot = document.querySelector('.cursor-dot');
+const curRing = document.querySelector('.cursor-ring');
+let curX = 0, curY = 0, ringX = 0, ringY = 0;
+
+window.addEventListener('mousemove', (e) => {
+    curX = e.clientX; curY = e.clientY;
+    curDot.style.transform = `translate(${curX - 3.5}px, ${curY - 3.5}px)`;
+});
+
+function updateCursor() {
+    ringX += (curX - ringX) * 0.13;
+    ringY += (curY - ringY) * 0.13;
+    curRing.style.transform = `translate(${ringX - 15}px, ${ringY - 15}px)`;
+    requestAnimationFrame(updateCursor);
+}
+updateCursor();
+
+/* CARD TILT */
+document.querySelectorAll('.dash-card').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+        const { left, top, width, height } = card.getBoundingClientRect();
+        const x = (e.clientX - left) / width - 0.5;
+        const y = (e.clientY - top) / height - 0.5;
+        gsap.to(card, { rotateY: x * 16, rotateX: -y * 16, duration: 0.4, ease: 'power2.out' });
+    });
+    card.addEventListener('mouseleave', () => {
+        gsap.to(card, { rotateY: 0, rotateX: 0, duration: 0.6, ease: 'power2.out' });
+    });
+});
+
+/* PAGE LOAD & COUNTERS */
+window.addEventListener('load', () => {
+    const tl = gsap.timeline();
+    tl.from('nav', { y: -20, opacity: 0, duration: 0.5 })
+      .from('.h-eyebrow', { y: 20, opacity: 0, duration: 0.5 }, 0.2)
+      .from(['.l1', '.l2', '.l3'], { y: 30, opacity: 0, stagger: 0.12, duration: 0.6 }, 0.4)
+      .from('.h-sub', { opacity: 0, duration: 0.6 }, 0.8)
+      .from('.h-btns', { opacity: 0, duration: 0.6 }, 1.0)
+      .from(['.hero-right .dash-card', '.hero-right .stat-pair'], { x: 40, opacity: 0, stagger: 0.15, duration: 0.7 }, 0.6);
+
+    const count = (id, end, fmt = false) => {
+        const obj = { val: 0 };
+        gsap.to(obj, { 
+            val: end, duration: 1.5, ease: 'power2.out',
+            onUpdate: () => {
+                document.getElementById(id).textContent = fmt ? 
+                    Math.floor(obj.val).toLocaleString('en-IN') : 
+                    (id === 's3' ? obj.val.toFixed(1) : Math.floor(obj.val).toLocaleString('en-IN'));
+            }
+        });
+    };
+    count('c1', 284950, true);
+    count('s1', 2500);
+    count('s2', 1200);
+    count('s3', 99.9);
+});
+</script>
+</body>
+</html>
